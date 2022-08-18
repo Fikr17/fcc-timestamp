@@ -24,20 +24,32 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+app.get("/api", function (req, res) {
+  let tanggal = new Date();
+  res.json({
+    unix: tanggal.getTime(),
+    utc: tanggal.toUTCString(),
+  });
+});
+
 app.get("/api/:tanggal", function (req, res) {
   let tanggal = req.params.tanggal;
-  if (!tanggal.match(/\D/g)) {
+  let regex = tanggal.match(/\D/g)
+  if (!regex) {
     tanggal = new Date(parseInt(tanggal)).getTime();
+  } else if((regex[0] == '-') && (regex[1] == '-')){
+    tanggal = new Date(tanggal).getTime();
+    let resUtc = new Date(tanggal).toUTCString();
+    res.json({
+      unix: tanggal,
+      utc: resUtc
+    });
+  } else {
+    res.json({ error: "Invalid Date" });
   }
-  tanggal = new Date(tanggal).getTime();
-  let resUtc = new Date(tanggal).toUTCString();
-  res.json({
-    unix: tanggal,
-    utc: resUtc
-  });
 })
 
 // listen for requests :)
-var listener = app.listen(process.env.PORT, function () {
+var listener = app.listen(3000, function () {
   console.log('Your app is listening on port ' + listener.address().port);
 });
