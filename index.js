@@ -24,7 +24,18 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
-
+app.get("/api/:tanggal", function (req, res) {
+  let tanggal = req.params.tanggal;
+  if (!tanggal.match(/\D/g)) {
+    tanggal = new Date(parseInt(tanggal)).getTime();
+  }
+  tanggal = new Date(tanggal).getTime();
+  let resUtc = new Date(tanggal).toUTCString();
+  res.json({
+    unix: tanggal,
+    utc: resUtc
+  });
+})
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
